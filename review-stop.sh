@@ -2,7 +2,8 @@
 # ~/.claude/hooks/review-stop.sh
 #
 # Stop hook — blocks Claude from finishing until a sub-agent reviews all work.
-# On first stop: blocks with a reason instructing Claude to spawn a review agent.
+# Only fires when uncommitted code changes are detected (unstaged, staged, or untracked).
+# On first stop with changes: blocks and instructs Claude to spawn a review agent.
 # On second stop (stop_hook_active=true): allows through (loop prevention).
 
 set -euo pipefail
@@ -24,8 +25,14 @@ if [[ "$STOP_HOOK_ACTIVE" == "true" ]]; then
   exit 0
 fi
 
-# ── 3. Block and request sub-agent review ────────────────────────────────────
-echo "review-stop: blocking stop, requesting sub-agent review." >&2
+# ── 3. Skip review if no code changes ────────────────────────────────────────
+if git diff --quiet HEAD 2>/dev/null && git diff --quiet --cached 2>/dev/null && [[ -z "$(git ls-files --others --exclude-standard 2>/dev/null)" ]]; then
+  echo "review-stop: no code changes detected, allowing stop." >&2
+  exit 0
+fi
+
+# ── 4. Block and request sub-agent review ────────────────────────────────────
+echo "review-stop: code changes detected, requesting sub-agent review." >&2
 
 REASON=$(cat <<'REASON_EOF'
 STOP — Before you finish, you MUST spawn a review sub-agent using the Agent tool.
