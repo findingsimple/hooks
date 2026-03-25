@@ -9,6 +9,7 @@ This repository contains Claude Code hook scripts — shell scripts that run aut
 ## Repository Structure
 
 - `save-plan.sh` — PostToolUse hook for `ExitPlanMode`. Copies the most recently modified plan from `$HOME/.claude/plans/` into an Obsidian vault with YAML front matter and a date-prefixed kebab-case filename derived from the plan's `Plan: ...` title line. Appends a numeric suffix to avoid overwriting same-day duplicates.
+- `guard-bash.sh` — PreToolUse hook for `Bash`. Inspects commands against a blocklist of dangerous patterns (recursive deletes, force push to main/master, sudo, fork bombs, etc.) and denies execution with a reason message sent back to Claude. Fail-open design: if parsing fails, the command is allowed.
 
 ## Environment Dependencies
 
