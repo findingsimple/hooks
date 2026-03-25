@@ -15,6 +15,10 @@ This repository contains Claude Code hook scripts — shell scripts that run aut
 - **`OBSIDIAN_PLANS_PATH`** — required env var (set in `~/.zshrc`) pointing to the Obsidian vault directory where plans are saved.
 - Plans are read from `$HOME/.claude/plans/*.md`.
 
+## Privacy
+
+Do not include business information or personally identifiable information (PII) in scripts, filenames, directory names, or comments. Use environment variables for any paths or values that could reveal sensitive details.
+
 ## Hook Script Conventions
 
 - Scripts use `#!/usr/bin/env bash` with `set -euo pipefail`.
