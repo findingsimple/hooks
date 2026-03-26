@@ -10,7 +10,7 @@ This repository contains Claude Code hook scripts — shell scripts that run aut
 
 - `save-plan.sh` — PostToolUse hook for `ExitPlanMode`. Copies the most recently modified plan from `$HOME/.claude/plans/` into an Obsidian vault with YAML front matter and a date-prefixed kebab-case filename derived from the plan's `Plan: ...` title line. Appends a numeric suffix to avoid overwriting same-day duplicates.
 - `guard-bash.sh` — PreToolUse hook for `Bash`. Inspects commands against a blocklist of dangerous patterns (recursive deletes, force push to main/master, sudo, fork bombs, etc.) and denies execution with a reason message sent back to Claude. Fail-open design: if parsing fails, the command is allowed.
-- `review-stop.sh` — Stop hook. Blocks Claude from finishing until a sub-agent (spawned via the Agent tool) reviews all work done in the session. Checks `stop_hook_active` from stdin JSON to prevent infinite loops. The review covers correctness, security, completeness, style, and documentation.
+- **Stop agent hook** — configured directly in `~/.claude/settings.json` as a native `type: "agent"` hook (no shell script). Spawns a sub-agent to review uncommitted code changes before Claude finishes. Skips review when `stop_hook_active` is true (loop prevention) or when no code changes exist.
 
 ## Environment Dependencies
 
