@@ -2,6 +2,12 @@
 
 Hooks that run automatically in response to Claude Code lifecycle events. Referenced from `~/.claude/settings.json`.
 
+| Hook | Type | Event | Purpose |
+|------|------|-------|---------|
+| [`save-plan.sh`](#save-plansh) | Command | `PostToolUse` → `ExitPlanMode` | Saves plans to Obsidian vault |
+| [`guard-bash.sh`](#guard-bashsh) | Command | `PreToolUse` → `Bash` | Blocks dangerous shell commands |
+| [Review on Stop](#review-on-stop-agent-hook) | Agent | `Stop` | Reviews code changes before finishing |
+
 ## Hooks
 
 ### `save-plan.sh`
