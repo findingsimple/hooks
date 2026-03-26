@@ -112,7 +112,7 @@ Register the hook in `~/.claude/settings.json`:
         "hooks": [
           {
             "type": "agent",
-            "prompt": "Your review prompt here...",
+            "prompt": "If stop_hook_active is true in $ARGUMENTS, return {\"ok\": true} immediately. Run `git status --short`. If clean, return {\"ok\": true}. Otherwise run `git diff HEAD` and review for bugs, security issues, or incomplete work. Only flag HIGH SIGNAL issues — real bugs, security vulnerabilities, or clearly broken logic. Do NOT flag subjective suggestions, style preferences, or improvements. If you are not certain an issue is real, do not flag it. False positives erode trust and waste reviewer time. Return {\"ok\": true, \"reason\": \"All clear.\"} if clean, or {\"ok\": false, \"reason\": \"brief list of issues\"} only for genuine problems.",
             "timeout": 120
           }
         ]
