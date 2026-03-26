@@ -17,7 +17,7 @@ COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty' 2>/dev/null || tr
 
 if [[ -z "$COMMAND" ]]; then
   # Fail-open: can't parse or empty command — don't block
-  echo '{"hookSpecificOutput":{"permissionDecision":"allow"}}'
+  echo '{"continue":true,"suppressOutput":true,"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow","permissionDecisionReason":""}}'
   exit 0
 fi
 
@@ -67,11 +67,11 @@ for i in "${!PATTERNS[@]}"; do
     REASON="${REASONS[$i]}"
     echo "guard-bash: BLOCKED — ${REASON}" >&2
     jq -n --arg reason "Blocked: ${REASON}. Ask the user for permission before running this command." \
-      '{"hookSpecificOutput":{"permissionDecision":"deny","permissionDecisionReason":$reason}}'
+      '{"continue":false,"suppressOutput":false,"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":$reason}}'
     exit 0
   fi
 done
 
 # ── 4. No pattern matched — allow ─────────────────────────────────────────────
-echo '{"hookSpecificOutput":{"permissionDecision":"allow"}}'
+echo '{"continue":true,"suppressOutput":true,"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow","permissionDecisionReason":""}}'
 exit 0

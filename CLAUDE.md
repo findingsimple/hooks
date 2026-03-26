@@ -29,6 +29,10 @@ Do not include business information or personally identifiable information (PII)
 - Scripts exit 0 on non-fatal issues (missing files, empty content) to avoid blocking Claude Code.
 - Filenames follow the pattern: `YYYY-MM-DD-kebab-case-title.md` (with `-N` suffix for duplicates).
 - Filenames are truncated to 80 chars on a whole-word boundary.
+- **Use the modern hook output format** to avoid phantom "hook error" labels in the UI (see [#17088](https://github.com/anthropics/claude-code/issues/17088)). The modern format wraps `hookSpecificOutput` with `continue`, `suppressOutput`, and `hookEventName` fields:
+  ```json
+  {"continue":true,"suppressOutput":true,"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow","permissionDecisionReason":""}}
+  ```
 
 ## Testing
 
