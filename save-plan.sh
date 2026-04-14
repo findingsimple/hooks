@@ -82,6 +82,7 @@ fi
   echo "---"
   echo "created: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "source: claude-code-plan-mode"
+  echo "tags: [ai-plan]"
   echo "---"
   echo ""
   cat "$PLAN_FILE"
