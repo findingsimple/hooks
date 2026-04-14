@@ -92,41 +92,44 @@ echo "save-plan: Plan saved → ${DEST_FILENAME}" >&2
 # ── 8. Regenerate Plans/_Index.md ───────────────────────────────────────────
 #    Keeps the index current without needing a separate vault-linker run.
 #    Same format as vault-linker's generate_plans_index().
-INDEX_PATH="${OBSIDIAN_DIR}/_Index.md"
-TMP_INDEX="${INDEX_PATH}.tmp"
+#    Wrapped in subshell — index failure must not affect plan save above.
+(
+  INDEX_PATH="${OBSIDIAN_DIR}/_Index.md"
+  TMP_INDEX="${INDEX_PATH}.tmp"
 
-{
-  echo "---"
-  echo "type: index"
-  echo "scope: plans"
-  echo "generated: true"
-  echo "---"
-  echo ""
-  echo "# Plans"
-  echo ""
-  echo "| Date | Plan |"
-  echo "|------|------|"
+  {
+    echo "---"
+    echo "type: index"
+    echo "scope: plans"
+    echo "generated: true"
+    echo "---"
+    echo ""
+    echo "# Plans"
+    echo ""
+    echo "| Date | Plan |"
+    echo "|------|------|"
 
-  # List .md files reverse-sorted (newest first), skip _ prefixed files
-  # Use cd + glob to avoid word-splitting on spaces in the iCloud path
-  (cd "${OBSIDIAN_DIR}" && ls -1r *.md 2>/dev/null) | while IFS= read -r BASENAME; do
-    # Skip index/meta files
-    [[ "$BASENAME" == _* ]] && continue
+    # List .md files reverse-sorted (newest first), skip _ prefixed files
+    # Use cd + glob to avoid word-splitting on spaces in the iCloud path
+    (cd "${OBSIDIAN_DIR}" && ls -1r *.md 2>/dev/null) | while IFS= read -r BASENAME; do
+      # Skip index/meta files
+      [[ "$BASENAME" == _* ]] && continue
 
-    NAME="${BASENAME%.md}"
-    FILE_DATE="${NAME:0:10}"
+      NAME="${BASENAME%.md}"
+      FILE_DATE="${NAME:0:10}"
 
-    # Read first H1 heading for title, fallback to filename
-    TITLE=$(grep -m1 '^# ' "${OBSIDIAN_DIR}/${BASENAME}" 2>/dev/null | sed 's/^# //' || true)
-    if [[ -z "$TITLE" ]]; then
-      TITLE="$NAME"
-    fi
+      # Read first H1 heading for title, fallback to filename
+      TITLE=$(grep -m1 '^# ' "${OBSIDIAN_DIR}/${BASENAME}" 2>/dev/null | sed 's/^# //' || true)
+      if [[ -z "$TITLE" ]]; then
+        TITLE="$NAME"
+      fi
 
-    echo "| ${FILE_DATE} | [[${NAME}\\|${TITLE}]] |"
-  done
+      echo "| ${FILE_DATE} | [[${NAME}\\|${TITLE}]] |"
+    done
 
-  echo ""
-} > "$TMP_INDEX"
+    echo ""
+  } > "$TMP_INDEX"
 
-mv "$TMP_INDEX" "$INDEX_PATH"
-echo "save-plan: Index updated → _Index.md" >&2
+  mv "$TMP_INDEX" "$INDEX_PATH"
+  echo "save-plan: Index updated → _Index.md" >&2
+) || echo "save-plan: warning — index regeneration failed" >&2
